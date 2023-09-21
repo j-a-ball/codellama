@@ -1,7 +1,10 @@
+#!/bin/bash
 # Running inference on a quantized 7B Instruction-tuned CodeLlama model
 
 python3 convert.py --outfile models/7B/instruct-f16.bin --outtype f16 ../CodeLlama-7b-Instruct
+
 ./quantize ./models/7B/instruct-f16.bin ./models/7B/instruct-q4_0.bin q4_0
+
 ./main -m ./models/7B/instruct-q4_0.bi --prompt \
 "Generate valid json according to the following scheme: {'authors': list(str), 'international': str, 'theoretical': bool, 'empirical': bool} Here is a
 text to convert to json data: '''FAMILY INFLUENCES ON DROPOUT BEHAVIOR IN
@@ -36,7 +39,6 @@ dropouts are more likely to come from families in which they have to make
 decisions on their own and in which their parents are less involved in their
 
 education.''' ###Now, extract data from the text, and output only the valid json according to the template."
-
 
 ### Outputs
 ### "If you want to add other templates, just say so:
