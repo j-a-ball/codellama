@@ -5,7 +5,7 @@ python3 convert.py --outfile models/7B/instruct-f16.bin --outtype f16 ../CodeLla
 
 ./quantize ./models/7B/instruct-f16.bin ./models/7B/instruct-q4_0.bin q4_0
 
-./main -m ./models/7B/instruct-q4_0.bi --prompt \
+./main -m ./models/7B/instruct-q4_0.bin --prompt \
 "Generate valid json according to the following scheme: {'authors': list(str), 'international': str, 'theoretical': bool, 'empirical': bool} Here is a
 text to convert to json data: '''FAMILY INFLUENCES ON DROPOUT BEHAVIOR IN
 ONE CALIFORNIA HIGH SCHOOL                                               
