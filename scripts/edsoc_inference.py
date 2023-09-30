@@ -11,7 +11,6 @@ import time
 import torch
 from transformers import AutoTokenizer
 
-from llama_recipes.inference.safety_utils import get_safety_checker
 from llama_recipes.inference.model_utils import load_model, load_peft_model
 
 
@@ -19,7 +18,7 @@ def main(
     model_name,
     peft_model: str=None,
     quantization: bool=False,
-    max_new_tokens =100, #The maximum numbers of tokens to generate
+    max_new_tokens = 100, #The maximum numbers of tokens to generate
     prompt_file: str=None,
     seed: int=42, #seed value for reproducibility
     do_sample: bool=True, #Whether or not to use sampling ; use greedy decoding otherwise.
@@ -69,25 +68,6 @@ def main(
             print("Module 'optimum' not found. Please install 'optimum' it before proceeding.")
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    safety_checker = get_safety_checker(enable_azure_content_safety,
-                                        enable_sensitive_topics,
-                                        enable_salesforce_content_safety,
-                                        )
-
-    # Safety check of the user prompt
-    safety_results = [check(user_prompt) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User prompt deemed safe.")
-        print(f"User prompt:\n{user_prompt}")
-    else:
-        print("User prompt deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
-        print("Skipping the inference as the prompt is not safe.")
-        sys.exit(1)  # Exit the program with an error status
         
     batch = tokenizer(user_prompt, return_tensors="pt")
 
@@ -110,20 +90,7 @@ def main(
     e2e_inference_time = (time.perf_counter()-start)*1000
     print(f"the inference time is {e2e_inference_time} ms")
     output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    
-    # Safety check of the model output
-    safety_results = [check(output_text) for check in safety_checker]
-    are_safe = all([r[1] for r in safety_results])
-    if are_safe:
-        print("User input and model output deemed safe.")
-        print(f"Model output:\n{output_text}")
-    else:
-        print("Model output deemed unsafe.")
-        for method, is_safe, report in safety_results:
-            if not is_safe:
-                print(method)
-                print(report)
-                
+
 
 if __name__ == "__main__":
     fire.Fire(main)
