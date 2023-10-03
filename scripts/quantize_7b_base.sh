@@ -4,7 +4,7 @@
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp
 LLAMA_METAL=1 make
-mkdir model/7B
+mkdir models/7B
 
 # Create conda env
 conda create -n codellama python=3.11
